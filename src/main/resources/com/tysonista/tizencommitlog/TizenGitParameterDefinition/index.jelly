@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!--
+    This jelly script is used for per-project configuration.
+
+    See global.jelly for a general discussion about jelly script.
+  -->
+
+  <!--
+    Creates a text field that shows the value of the "name" property.
+    When submitted, it will be passed to the corresponding constructor parameter.
+  -->
+  <f:validateButton
+        method="descriptor/com.tysonista.tizencommitlog.TizenGitParameterDefinition/test"
+        title="${%index.jelly}"
+        progress="${%Checking...}"
+    />
+    <f:entry title="Name" field="name">
+    <f:textbox name="value" value="${it.rootUrl}"/>
+  </f:entry>
+</j:jelly>

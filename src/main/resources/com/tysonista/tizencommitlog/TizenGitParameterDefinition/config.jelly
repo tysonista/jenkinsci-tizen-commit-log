@@ -2,4 +2,9 @@
   <f:entry title="Name" field="name">
     <f:textbox />
   </f:entry>
+  <f:validateButton
+        method="testkaka"
+        title="${%config.jelly}"
+        progress="${%Checking...}"
+    />
 </j:jelly>
