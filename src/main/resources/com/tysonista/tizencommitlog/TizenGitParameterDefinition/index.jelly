@@ -1,21 +1,59 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <!--
-    This jelly script is used for per-project configuration.
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+    xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+    xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
 
-    See global.jelly for a general discussion about jelly script.
-  -->
-
-  <!--
-    Creates a text field that shows the value of the "name" property.
-    When submitted, it will be passed to the corresponding constructor parameter.
-  -->
-  <f:validateButton
-        method="descriptor/com.tysonista.tizencommitlog.TizenGitParameterDefinition/test"
-        title="${%index.jelly}"
+    <f:entry title="${%Git Url}">
+        <div name="parameter">
+            <input type="hidden" name="Git_Url" value="${%Git Url}" />
+            <select name="value" id="url">
+              <j:forEach var="value" items="${it.gitUrls}">
+                <f:option selected="${it.value==value}">${value}</f:option>
+              </j:forEach>
+            </select>
+        </div>
+    </f:entry>
+    <f:entry title="${%Git Port}" field="port">
+        <div name="parameter">
+            <input type="hidden" name="Git_Port" value="${%Git Port}" />
+            <select name="value" id="port">
+              <j:forEach var="value" items="${it.gitPorts}">
+                <f:option selected="${it.value==value}">${value}</f:option>
+              </j:forEach>
+            </select>
+        </div>
+    </f:entry>
+    <f:entry title="${%Git Path}" field="path">
+        <div name="parameter">
+            <input type="hidden" name="Git_Path" value="${%Git Path}" />
+            <select name="value" id="path">
+              <j:forEach var="value" items="${it.gitPaths}">
+                <f:option selected="${it.value==value}">${value}</f:option>
+              </j:forEach>
+            </select>
+        </div>
+    </f:entry>
+    <f:entry title="${%Git Branch}" field="branch">
+        <div name="parameter">
+            <input type="hidden" name="Git_Branch" value="${%Git Branch}" />
+            <select name="value" id="branch">
+              <j:forEach var="value" items="${it.gitBranchs}">
+                <f:option selected="${it.value==value}">${value}</f:option>
+              </j:forEach>
+            </select>
+        </div>
+    </f:entry>
+    <script type="text/javascript">
+        function getSelectedText(elementId) {
+            var elt = document.getElementById(elementId);
+            if (elt.selectedIndex == -1)
+                return null;
+            return elt.options[elt.selectedIndex].text;
+        }
+    </script>
+    <f:validateButton
+        method="descriptor/com.tysonista.tizencommitlog.TizenGitParameterDefinition/test?url='+getSelectedText(&quot;url&quot;)+'port='+getSelectedText(&quot;port&quot;)+'path='+getSelectedText(&quot;path&quot;)+'branch='+getSelectedText(&quot;branch&quot;)+'"
+        title="${%Get Commit Logs}"
         progress="${%Checking...}"
     />
-    <f:entry title="Name" field="name">
-    <f:textbox name="value" value="${it.rootUrl}"/>
-  </f:entry>
 </j:jelly>
