@@ -10,10 +10,4 @@
     Creates a text field that shows the value of the "name" property.
     When submitted, it will be passed to the corresponding constructor parameter.
   -->
-  <f:validateButton
-        method="getCommitLog"
-        title="${%Get Commit Log}"
-        progress="${%Checking...}"
-        with="gitUrl,gitPort,gitPath,gitBranch,packageVersionRule"
-    />
 </j:jelly>
