@@ -7,6 +7,7 @@ import hudson.util.ArgumentListBuilder;
 import hudson.util.FormValidation;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,6 +80,8 @@ public class TizenGitParameterDefinition extends ParameterDefinition {
 
     @Extension
     public static class DescriptorImpl extends ParameterDescriptor {
+        String pluginPath = "/home/wac/jenkins/plugins/tizen-commit-log/";
+
         @Override
         public String getDisplayName() {
             return "Tizen Commit Logs";
@@ -102,8 +105,7 @@ public class TizenGitParameterDefinition extends ParameterDefinition {
         }
         public FormValidation antCall(String url, String port, String path, String branch) throws IOException, InterruptedException {
             // This also shows how you can consult the global configuration of the builder
-            String buildXmlDirPath = "/home/wac/jenkins/plugins/tizen-commit-log/";
-            String buildXmlFilePath = buildXmlDirPath+"ant-version.xml";
+            String buildXmlFilePath = pluginPath+"ant-version.xml";
 
             ArgumentListBuilder args = new ArgumentListBuilder();
             args.add("ant");
@@ -132,7 +134,26 @@ public class TizenGitParameterDefinition extends ParameterDefinition {
                 String errs = getString(process.getErrorStream());
                 return FormValidation.error("ant build failed("+ exitValue+")\n"+logs+"\n"+errs);
             } else {
-                return FormValidation.ok(logs);
+                String commitData = getCommitData();
+                StringBuilder sb = new StringBuilder();
+                sb.append("[Commit Logs]")
+                .append("=======================")
+                .append(commitData)
+                .append("=======================");
+
+                return FormValidation.ok(sb.toString());
+            }
+        }
+        private String getCommitData() throws IOException {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(pluginPath+"commit-data");
+                String commitData = getString(fis);
+                return commitData;
+            } finally {
+                if (fis != null) {
+                    fis.close();
+                }
             }
         }
         private String getString(InputStream is) throws IOException {

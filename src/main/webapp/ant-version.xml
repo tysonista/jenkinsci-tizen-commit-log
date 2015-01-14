@@ -12,7 +12,7 @@
 	<property name="version.project.name" value="${GIT_PROJECT_NAME}"/>
 	<property name="version.branch.name" value="${GIT_BRANCH_NAME}"/>
 	<property name="version.change.data" value="${CHANGE_DATA}"/>
-	<property name="version.user.name" value="jenkins.ide"/>
+	<property name="version.user.name" value="hyocheol.ahn"/>
 	<property name="version.key.path" value=".ssh/id_rsa"/>
 	<property name="version.package.path" value=""/>
 		
@@ -147,7 +147,7 @@
 	<get.age.time.info last.time.ms="${patchset.lastUpdate.info}" />
 	<echo> Agot Time (minute time)- ${package.version.ago.time} </echo>
 	
-	<!-- Get change logs to ago time.-->
+	<!-- Get chagne logs to ago time.-->
 	<antcallback target="ant-gerrit.get.change.log.data" return = "patchset.change.data.infos">
 	  <param name="project.name" value="${version.project.name}"/>
 	  <param name="branch.name" value="${version.branch.name}"/>
@@ -220,9 +220,10 @@
 		<for list="${version.change.data}" param="change.log" delimiter="${line.separator}">
 			<sequential>
 			  <echo> CCC - @{change.log} </echo>
-			  <echo file="${version.package.path}/package/changelog" append="true">- @{change.log}${line.separator}</echo>
+			  <string.trim str.data="@{change.log}" />
+			  <echo file="${version.package.path}/package/changelog" append="true">- ${version.change.log.trim}${line.separator}</echo>
 			</sequential>
-		</for>
+		</for>		
 		
 		<echo file="${version.package.path}/package/changelog" append="true">== hyocheol.ahn &lt;hyocheol.ahn@samsung.com&gt; ${TODAY}${line.separator}</echo>
 	    <echo file="${version.package.path}/package/changelog" append="true">${file}</echo>
@@ -327,10 +328,11 @@
 		<for list="${patchset.change.data.infos}" param="change.log" delimiter="@+">
 			<sequential>
 			  <echo> CCC - @{change.log} </echo>
-			  <echo file="${version.package.path}/package/changelog" append="true">- @{change.log}${line.separator}</echo>
+			  <string.trim str.data="@{change.log}" />
+			  <echo file="${version.package.path}/package/changelog" append="true">- ${version.change.log.trim}${line.separator}</echo>
 			</sequential>
 		</for>
-		
+				
 		<echo file="${version.package.path}/package/changelog" append="true">== hyocheol.ahn &lt;hyocheol.ahn@samsung.com&gt; ${TODAY}${line.separator}</echo>
 	    <echo file="${version.package.path}/package/changelog" append="true">${file}</echo>
 		
@@ -364,31 +366,21 @@
   <target name="test"  description="execute reverse build.">
   	 
 	<echo> TTT : ${version.change.data} </echo>
-	
-   <prop-require-check prop="CHANGE_DATA" />
+	<for list="${version.change.data}" param="change.log" delimiter="${line.separator}">
+			<sequential>
+			  <echo> CCC - @{change.log}--- </echo>
+			  <string.trim str.data="@{change.log}" />
+			  <echo> AAA - ${version.change.log.trim}---- </echo>
+			</sequential>
+	</for>
+   
   </target>
   
-
-  
-  <scriptdef name="test.js" language="javascript">     
-      <attribute name="str"/>
-      importClass(java.io.File);
-      importClass(java.io.FileReader);
-      importClass(java.io.BufferedReader);
-      importClass(java.io.FileWriter);
-      importClass(java.io.BufferedWriter);
-	  
+  <scriptdef name="string.trim" language="javascript">     
+    <attribute name="str.data"/>	 
+    var logTrim = attributes.get('str.data').trim();
+	project.setProperty('version.change.log.trim',logTrim);	 
 	
-	 var test = "test ";
-     var testTrim = attributes.get('str').trim();
-	 var testHyo = test.trim();
-	 echo = project.createTask("echo");
-	echo.setMessage(" TEST JS : " + testTrim + "DDDD");
-	echo.perform();
-	
-	 echo = project.createTask("echo");
-	echo.setMessage(" TEST AS : " + testHyo + "DDDD");
-	echo.perform();
   </scriptdef>  
   
   <scriptdef name="get.change.version.up" language="javascript">
